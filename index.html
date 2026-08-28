@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>Audience Light</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background: #000;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#lightScreen {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.25s ease;
+}
+
+#startButton {
+  border: none;
+  background: white;
+  color: black;
+  padding: 18px 35px;
+  border-radius: 50px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#info {
+  position: absolute;
+  bottom: 25px;
+  color: rgba(255,255,255,0.7);
+  font-size: 12px;
+  text-align: center;
+}
+
+.flash {
+  animation: flashEffect 0.7s infinite alternate;
+}
+
+@keyframes flashEffect {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div id="lightScreen">
+
+  <button id="startButton">
+    TAP TO START ✨
+  </button>
+
+  <div id="info">
+    Turn your screen brightness up
+  </div>
+
+</div>
+
+<script>
+
+const screen = document.getElementById("lightScreen");
+const button = document.getElementById("startButton");
+const info = document.getElementById("info");
+
+const colours = [
+  "#ff003c",
+  "#00ff66",
+  "#0066ff",
+  "#aa00ff",
+  "#ffff00",
+  "#00ffff",
+  "#ff6600",
+  "#ff00aa"
+];
+
+let running = false;
+let timer;
+
+function randomColour() {
+  return colours[Math.floor(Math.random() * colours.length)];
+}
+
+function changeColour() {
+  screen.style.backgroundColor = randomColour();
+}
+
+function startShow() {
+
+  running = true;
+
+  button.style.display = "none";
+  info.style.display = "none";
+
+  // Try fullscreen
+  if (document.documentElement.requestFullscreen) {
+    document.documentElement.requestFullscreen().catch(() => {});
+  }
+
+  // Start colour changes
+  changeColour();
+
+  timer = setInterval(() => {
+    changeColour();
+  }, 700);
+
+  screen.classList.add("flash");
+}
+
+button.addEventListener("click", startShow);
+
+</script>
+
+</body>
+</html>
