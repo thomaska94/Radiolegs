@@ -1,87 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>Audience Light</title>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
+
+<title>Radiolegs Audience Light</title>
 
 <style>
+
 * {
   box-sizing: border-box;
 }
 
-html, body {
+html,
+body {
   margin: 0;
-  padding: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  font-family: Arial, sans-serif;
-  background: #000;
+  background: black;
 }
 
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#lightScreen {
+#light {
   position: fixed;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  background: #000;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.25s ease;
+
+  background: #000;
+
+  transition:
+    background-color 0.25s ease;
+
+  font-family: Arial, sans-serif;
 }
 
-#startButton {
+/* RADIOLEGS LOGO */
+
+#logo {
+  width: 72%;
+  max-width: 500px;
+
+  height: auto;
+
+  filter:
+    drop-shadow(0 4px 15px rgba(0,0,0,0.35));
+
+  pointer-events: none;
+  user-select: none;
+}
+
+/* START BUTTON */
+
+#start {
+  position: absolute;
+  z-index: 10;
+
   border: none;
+
+  padding: 20px 38px;
+
+  border-radius: 50px;
+
   background: white;
   color: black;
-  padding: 18px 35px;
-  border-radius: 50px;
-  font-size: 20px;
+
+  font-size: 18px;
   font-weight: bold;
-  cursor: pointer;
 }
 
-#info {
+/* SMALL MESSAGE */
+
+#message {
   position: absolute;
+
   bottom: 25px;
-  color: rgba(255,255,255,0.7);
-  font-size: 12px;
+
+  width: 100%;
+
   text-align: center;
+
+  color: rgba(255,255,255,0.7);
+
+  font-size: 12px;
 }
 
-.flash {
-  animation: flashEffect 0.7s infinite alternate;
+/* LIGHT PULSE */
+
+.active {
+  animation: pulse 0.75s infinite alternate;
 }
 
-@keyframes flashEffect {
+@keyframes pulse {
+
   from {
-    opacity: 0.35;
+    filter: brightness(0.55);
   }
+
   to {
-    opacity: 1;
+    filter: brightness(1.15);
   }
+
 }
+
+@media (prefers-reduced-motion: reduce) {
+
+  .active {
+    animation: none;
+  }
+
+}
+
 </style>
+
 </head>
 
 <body>
 
-<div id="lightScreen">
+<div id="light">
 
-  <button id="startButton">
-    TAP TO START ✨
+  <!-- RADIOLEGS LOGO -->
+  <img
+    id="logo"
+    src="radiolegs-logo.png"
+    alt="Radiolegs"
+  >
+
+  <button id="start">
+    TAP TO JOIN ✨
   </button>
 
-  <div id="info">
+  <div id="message">
     Turn your screen brightness up
   </div>
 
@@ -89,55 +146,109 @@ body {
 
 <script>
 
-const screen = document.getElementById("lightScreen");
-const button = document.getElementById("startButton");
-const info = document.getElementById("info");
+const light =
+  document.getElementById("light");
+
+const start =
+  document.getElementById("start");
+
+const message =
+  document.getElementById("message");
+
 
 const colours = [
+
   "#ff003c",
   "#00ff66",
   "#0066ff",
-  "#aa00ff",
+  "#a600ff",
   "#ffff00",
-  "#00ffff",
+  "#00eaff",
   "#ff6600",
   "#ff00aa"
+
 ];
 
-let running = false;
-let timer;
+
+let timer = null;
+
 
 function randomColour() {
-  return colours[Math.floor(Math.random() * colours.length)];
+
+  const index =
+    Math.floor(
+      Math.random() *
+      colours.length
+    );
+
+  return colours[index];
+
 }
+
 
 function changeColour() {
-  screen.style.backgroundColor = randomColour();
+
+  light.style.backgroundColor =
+    randomColour();
+
 }
 
-function startShow() {
 
-  running = true;
+function startLight() {
 
-  button.style.display = "none";
-  info.style.display = "none";
+  start.style.display = "none";
 
-  // Try fullscreen
-  if (document.documentElement.requestFullscreen) {
-    document.documentElement.requestFullscreen().catch(() => {});
-  }
+  message.style.display = "none";
 
-  // Start colour changes
+  light.classList.add("active");
+
   changeColour();
 
-  timer = setInterval(() => {
-    changeColour();
-  }, 700);
 
-  screen.classList.add("flash");
+  timer = setInterval(
+
+    function() {
+
+      changeColour();
+
+    },
+
+    700
+
+  );
+
+
+  /* Fullscreen */
+
+  if (
+    document.documentElement
+      .requestFullscreen
+  ) {
+
+    document.documentElement
+      .requestFullscreen()
+      .catch(function() {});
+
+  }
+
+
+  /* Keep screen awake */
+
+  if ("wakeLock" in navigator) {
+
+    navigator.wakeLock
+      .request("screen")
+      .catch(function() {});
+
+  }
+
 }
 
-button.addEventListener("click", startShow);
+
+start.addEventListener(
+  "click",
+  startLight
+);
 
 </script>
 
